@@ -12,4 +12,6 @@ public class Location
 
     [StringLength(200)]
     public string? Description { get; set; }
+
+    public List<InventoryItem> InventoryItems { get; set; } = new();
 }

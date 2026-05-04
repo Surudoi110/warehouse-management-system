@@ -1,0 +1,57 @@
+@model IEnumerable<WarehouseApp.Core.Entities.InventoryItem>
+
+@{
+    ViewData["Title"] = "Inventory";
+}
+
+<h1>Current Inventory</h1>
+
+<p class="text-muted">
+    Inventory is updated automatically when you record stock movements.
+    Add stock through Receive Shipment to populate this list.
+</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No inventory recorded yet. Once you receive your first shipment, it will appear here.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Product</th>
+                <th>Location</th>
+                <th class="text-end">Quantity</th>
+                <th class="text-end">Reorder Level</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                var lowStock = item.Quantity <= item.Product!.ReorderLevel;
+                <tr>
+                    <td>@item.Product!.Sku</td>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Location!.Code</td>
+                    <td class="text-end">@item.Quantity</td>
+                    <td class="text-end">@item.Product.ReorderLevel</td>
+                    <td>
+                        @if (lowStock)
+                        {
+                            <span class="badge bg-warning text-dark">Low stock</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">OK</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

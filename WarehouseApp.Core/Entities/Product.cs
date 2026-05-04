@@ -27,4 +27,6 @@ public class Product
 
     [Display(Name = "Created At")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public List<InventoryItem> InventoryItems { get; set; } = new();
 }

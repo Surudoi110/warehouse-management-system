@@ -13,16 +13,19 @@ public class ApplicationDbContext : IdentityDbContext
 
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Location> Locations => Set<Location>();
+    public DbSet<InventoryItem> InventoryItems => Set<InventoryItem>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-        // Enforce uniqueness at the database level
         builder.Entity<Product>().HasIndex(p => p.Sku).IsUnique();
         builder.Entity<Location>().HasIndex(l => l.Code).IsUnique();
-
-        // MySQL needs explicit decimal precision
         builder.Entity<Product>().Property(p => p.UnitPrice).HasPrecision(10, 2);
+
+        // Each (Product, Location) pair has exactly one InventoryItem row
+        builder.Entity<InventoryItem>()
+            .HasIndex(i => new { i.ProductId, i.LocationId })
+            .IsUnique();
     }
 }
