@@ -1,0 +1,51 @@
+@model WarehouseApp.Core.Services.StockMovementRequest
+
+@{
+    ViewData["Title"] = "Ship Out";
+}
+
+<h1>Ship Out</h1>
+<p class="text-muted">Record outgoing stock and remove it from a warehouse location.</p>
+
+<form asp-action="Ship" method="post" class="col-md-6">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="ProductId" class="form-label"></label>
+        <select asp-for="ProductId" asp-items="ViewBag.Products" class="form-select">
+            <option value="">-- Select product --</option>
+        </select>
+        <span asp-validation-for="ProductId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="LocationId" class="form-label"></label>
+        <select asp-for="LocationId" asp-items="ViewBag.Locations" class="form-select">
+            <option value="">-- Select location --</option>
+        </select>
+        <span asp-validation-for="LocationId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Quantity" class="form-label"></label>
+        <input asp-for="Quantity" class="form-control" />
+        <span asp-validation-for="Quantity" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ReferenceNo" class="form-label"></label>
+        <input asp-for="ReferenceNo" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Notes" class="form-label"></label>
+        <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-warning">Ship</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

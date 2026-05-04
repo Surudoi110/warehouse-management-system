@@ -1,0 +1,65 @@
+@model IEnumerable<WarehouseApp.Core.Entities.StockMovement>
+
+@{
+    ViewData["Title"] = "Movement History";
+}
+
+<h1>Stock Movement History</h1>
+
+<p>
+    <a class="btn btn-success" asp-action="Receive">Receive Shipment</a>
+    <a class="btn btn-warning" asp-action="Ship">Ship Out</a>
+</p>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No movements yet.</div>
+}
+else
+{
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th>When</th>
+                <th>Type</th>
+                <th>Product</th>
+                <th>Location</th>
+                <th class="text-end">Qty</th>
+                <th>Reference</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in Model)
+            {
+                <tr>
+                    <td>@m.PerformedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        @if (m.MovementType == WarehouseApp.Core.Entities.MovementType.Receive)
+                        {
+                            <span class="badge bg-success">IN</span>
+                        }
+                        else if (m.MovementType == WarehouseApp.Core.Entities.MovementType.Ship)
+                        {
+                            <span class="badge bg-warning text-dark">OUT</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">ADJ</span>
+                        }
+                    </td>
+                    <td>@m.Product?.Sku — @m.Product?.Name</td>
+                    <td>@m.Location?.Code</td>
+                    <td class="text-end">@m.Quantity</td>
+                    <td>@m.ReferenceNo</td>
+                    <td>@m.Notes</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

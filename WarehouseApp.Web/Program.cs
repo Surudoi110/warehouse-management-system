@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WarehouseApp.Core.Services;
+using WarehouseApp.Infrastructure.Services;
 // using WarehouseApp.Web.Data;
 using WarehouseApp.Infrastructure.Data;
 
@@ -11,6 +13,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 44))));
+
+builder.Services.AddScoped<IStockMovementService, StockMovementService>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

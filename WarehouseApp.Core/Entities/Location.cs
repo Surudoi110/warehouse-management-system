@@ -14,4 +14,6 @@ public class Location
     public string? Description { get; set; }
 
     public List<InventoryItem> InventoryItems { get; set; } = new();
+
+    public List<StockMovement> Movements { get; set; } = new();
 }

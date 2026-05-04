@@ -27,5 +27,10 @@ public class ApplicationDbContext : IdentityDbContext
         builder.Entity<InventoryItem>()
             .HasIndex(i => new { i.ProductId, i.LocationId })
             .IsUnique();
+
+        builder.Entity<StockMovement>().HasIndex(m => m.ProductId);
+        builder.Entity<StockMovement>().HasIndex(m => m.PerformedAt);
     }
+
+    public DbSet<StockMovement> StockMovements => Set<StockMovement>();
 }

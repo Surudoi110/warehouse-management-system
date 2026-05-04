@@ -29,4 +29,6 @@ public class Product
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public List<InventoryItem> InventoryItems { get; set; } = new();
+
+    public List<StockMovement> Movements { get; set; } = new();
 }
