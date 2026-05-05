@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,6 +10,12 @@
     <link rel="stylesheet" href="~/WarehouseApp.Web.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <script>
+        (function () {
+            var saved = localStorage.getItem('wm-theme') || 'dark';
+            document.documentElement.setAttribute('data-bs-theme', saved);
+        })();
+    </script>
     <header>
         <nav class="navbar navbar-expand-sm navbar-dark border-bottom mb-3 wm-navbar">
             <div class="container-fluid">
@@ -59,6 +65,13 @@
                             }
                         }
                     </ul>
+                    <ul class="navbar-nav me-2">
+                        <li class="nav-item">
+                            <button class="btn nav-link wm-theme-toggle" id="themeToggle" type="button" title="Toggle light/dark mode">
+                                <i class="bi bi-sun-fill" id="themeIcon"></i>
+                            </button>
+                        </li>
+                    </ul>
                     <partial name="_LoginPartial" />
                 </div>
             </div>
@@ -78,6 +91,30 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        (function () {
+            var html = document.documentElement;
+            var btn  = document.getElementById('themeToggle');
+            var icon = document.getElementById('themeIcon');
+            if (!btn) return;
+
+            function updateIcon() {
+                var current = html.getAttribute('data-bs-theme');
+                icon.className = current === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+                btn.title = current === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+            }
+
+            updateIcon();
+
+            btn.addEventListener('click', function () {
+                var current = html.getAttribute('data-bs-theme');
+                var next = current === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-bs-theme', next);
+                localStorage.setItem('wm-theme', next);
+                updateIcon();
+            });
+        })();
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
