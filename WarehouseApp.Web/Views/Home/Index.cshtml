@@ -1,8 +1,145 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model WarehouseApp.Web.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h1 class="mb-4">Dashboard</h1>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-bg-primary">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-1">Products</h6>
+                <h2 class="card-title mb-0">@Model.TotalProducts</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-info">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-1">Locations</h6>
+                <h2 class="card-title mb-0">@Model.TotalLocations</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-success">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-1">Units in Stock</h6>
+                <h2 class="card-title mb-0">@Model.TotalUnits.ToString("N0")</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card @(Model.LowStockCount > 0 ? "text-bg-warning" : "text-bg-secondary")">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-1">Low Stock Items</h6>
+                <h2 class="card-title mb-0">@Model.LowStockCount</h2>
+            </div>
+        </div>
+    </div>
 </div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-header"><strong>Movements — Last 7 Days</strong></div>
+            <div class="card-body">
+                <canvas id="movementsChart" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card h-100">
+            <div class="card-header"><strong>Low Stock Alerts</strong></div>
+            <div class="card-body p-0">
+                @if (!Model.LowStockItems.Any())
+                {
+                    <div class="p-3 text-muted">All products are above reorder levels.</div>
+                }
+                else
+                {
+                    <table class="table table-sm mb-0">
+                        <thead><tr><th>Product</th><th class="text-end">In Stock</th><th class="text-end">Reorder</th></tr></thead>
+                        <tbody>
+                        @foreach (var r in Model.LowStockItems)
+                        {
+                            <tr>
+                                <td>@r.Sku — @r.Name</td>
+                                <td class="text-end">@r.CurrentStock</td>
+                                <td class="text-end text-muted">@r.ReorderLevel</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header"><strong>Recent Movements</strong></div>
+    <div class="card-body p-0">
+        @if (!Model.RecentMovements.Any())
+        {
+            <div class="p-3 text-muted">No movements recorded yet.</div>
+        }
+        else
+        {
+            <table class="table table-sm mb-0">
+                <thead><tr><th>When</th><th>Type</th><th>Product</th><th>Location</th><th class="text-end">Qty</th></tr></thead>
+                <tbody>
+                @foreach (var m in Model.RecentMovements)
+                {
+                    <tr>
+                        <td>@m.When.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            @if (m.Type == WarehouseApp.Core.Entities.MovementType.Receive)
+                            {
+                                <span class="badge bg-success">IN</span>
+                            }
+                            else if (m.Type == WarehouseApp.Core.Entities.MovementType.Ship)
+                            {
+                                <span class="badge bg-warning text-dark">OUT</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">ADJ</span>
+                            }
+                        </td>
+                        <td>@m.ProductName</td>
+                        <td>@m.LocationCode</td>
+                        <td class="text-end">@m.Quantity</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        const labels   = @Html.Raw(Json.Serialize(Model.Last7Days.Select(d => d.Date.ToString("MM-dd"))));
+        const received = @Html.Raw(Json.Serialize(Model.Last7Days.Select(d => d.Received)));
+        const shipped  = @Html.Raw(Json.Serialize(Model.Last7Days.Select(d => d.Shipped)));
+
+        new Chart(document.getElementById('movementsChart'), {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    { label: 'Received', data: received, backgroundColor: '#198754' },
+                    { label: 'Shipped',  data: shipped,  backgroundColor: '#ffc107' }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
+}

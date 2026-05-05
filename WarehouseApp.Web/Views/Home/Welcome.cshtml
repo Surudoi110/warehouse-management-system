@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = "Warehouse Manager";
+}
+
+<div class="text-center py-5">
+    <h1 class="display-4">Warehouse Manager</h1>
+    <p class="lead">Track products, locations, and stock movements with role-based access control.</p>
+    <p class="mb-4">Built with ASP.NET Core MVC, Entity Framework Core, and MySQL.</p>
+    <a class="btn btn-primary btn-lg me-2" asp-area="Identity" asp-page="/Account/Login">Sign in</a>
+    <a class="btn btn-outline-secondary btn-lg" asp-area="Identity" asp-page="/Account/Register">Register</a>
+</div>
+
+<hr class="my-5"/>
+
+<div class="row text-center">
+    <div class="col-md-4">
+        <h4>Inventory Tracking</h4>
+        <p class="text-muted">Real-time stock levels per product, per location.</p>
+    </div>
+    <div class="col-md-4">
+        <h4>Movement Audit Trail</h4>
+        <p class="text-muted">Every receipt and shipment recorded with timestamp and operator.</p>
+    </div>
+    <div class="col-md-4">
+        <h4>Role-Based Access</h4>
+        <p class="text-muted">Admin, Warehouse Staff, and Viewer roles with appropriate permissions.</p>
+    </div>
+</div>
