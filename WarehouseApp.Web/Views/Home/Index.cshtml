@@ -4,38 +4,45 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<h1 class="mb-4">Dashboard</h1>
+<div class="d-flex align-items-center mb-4">
+    <h1 class="mb-0"><i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard</h1>
+    <div class="ms-auto text-muted small">@DateTime.Now.ToString("dddd, MMMM d, yyyy")</div>
+</div>
 
 <div class="row g-3 mb-4">
     <div class="col-md-3">
-        <div class="card text-bg-primary">
+        <div class="card stat-card stat-primary">
             <div class="card-body">
-                <h6 class="card-subtitle mb-1">Products</h6>
-                <h2 class="card-title mb-0">@Model.TotalProducts</h2>
+                <i class="bi bi-tags-fill stat-icon"></i>
+                <div class="stat-label">Products</div>
+                <p class="stat-value">@Model.TotalProducts</p>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-bg-info">
+        <div class="card stat-card stat-info">
             <div class="card-body">
-                <h6 class="card-subtitle mb-1">Locations</h6>
-                <h2 class="card-title mb-0">@Model.TotalLocations</h2>
+                <i class="bi bi-geo-alt-fill stat-icon"></i>
+                <div class="stat-label">Locations</div>
+                <p class="stat-value">@Model.TotalLocations</p>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card text-bg-success">
+        <div class="card stat-card stat-success">
             <div class="card-body">
-                <h6 class="card-subtitle mb-1">Units in Stock</h6>
-                <h2 class="card-title mb-0">@Model.TotalUnits.ToString("N0")</h2>
+                <i class="bi bi-boxes stat-icon"></i>
+                <div class="stat-label">Units in Stock</div>
+                <p class="stat-value">@Model.TotalUnits.ToString("N0")</p>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card @(Model.LowStockCount > 0 ? "text-bg-warning" : "text-bg-secondary")">
+        <div class="card stat-card @(Model.LowStockCount > 0 ? "stat-warning" : "stat-muted")">
             <div class="card-body">
-                <h6 class="card-subtitle mb-1">Low Stock Items</h6>
-                <h2 class="card-title mb-0">@Model.LowStockCount</h2>
+                <i class="bi bi-exclamation-triangle-fill stat-icon"></i>
+                <div class="stat-label">Low Stock Items</div>
+                <p class="stat-value">@Model.LowStockCount</p>
             </div>
         </div>
     </div>
@@ -44,65 +51,72 @@
 <div class="row g-4 mb-4">
     <div class="col-lg-7">
         <div class="card h-100">
-            <div class="card-header"><strong>Movements — Last 7 Days</strong></div>
+            <div class="card-header"><i class="bi bi-bar-chart-line me-2"></i>Movements — Last 7 Days</div>
             <div class="card-body">
                 <canvas id="movementsChart" height="120"></canvas>
             </div>
         </div>
     </div>
     <div class="col-lg-5">
-        <div class="card h-100">
-            <div class="card-header"><strong>Low Stock Alerts</strong></div>
-            <div class="card-body p-0">
-                @if (!Model.LowStockItems.Any())
-                {
-                    <div class="p-3 text-muted">All products are above reorder levels.</div>
-                }
-                else
-                {
+        <div class="card">
+            <div class="card-header"><i class="bi bi-exclamation-triangle me-2 text-warning"></i>Low Stock Alerts</div>
+            @if (!Model.LowStockItems.Any())
+            {
+                <div class="card-body text-muted">
+                    <i class="bi bi-check-circle me-1 text-success"></i>
+                    All products are above their reorder levels.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
                     <table class="table table-sm mb-0">
                         <thead><tr><th>Product</th><th class="text-end">In Stock</th><th class="text-end">Reorder</th></tr></thead>
                         <tbody>
                         @foreach (var r in Model.LowStockItems)
                         {
                             <tr>
-                                <td>@r.Sku — @r.Name</td>
-                                <td class="text-end">@r.CurrentStock</td>
+                                <td><strong>@r.Sku</strong> <span class="text-muted">— @r.Name</span></td>
+                                <td class="text-end"><span class="badge bg-warning text-dark">@r.CurrentStock</span></td>
                                 <td class="text-end text-muted">@r.ReorderLevel</td>
                             </tr>
                         }
                         </tbody>
                     </table>
-                }
-            </div>
+                </div>
+            }
         </div>
     </div>
 </div>
 
 <div class="card mb-4">
-    <div class="card-header"><strong>Recent Movements</strong></div>
-    <div class="card-body p-0">
-        @if (!Model.RecentMovements.Any())
-        {
-            <div class="p-3 text-muted">No movements recorded yet.</div>
-        }
-        else
-        {
-            <table class="table table-sm mb-0">
-                <thead><tr><th>When</th><th>Type</th><th>Product</th><th>Location</th><th class="text-end">Qty</th></tr></thead>
+    <div class="card-header"><i class="bi bi-clock-history me-2"></i>Recent Movements</div>
+    @if (!Model.RecentMovements.Any())
+    {
+        <div class="card-body text-muted">No movements recorded yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-sm table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>When</th><th>Type</th><th>Product</th><th>Location</th><th class="text-end">Qty</th>
+                    </tr>
+                </thead>
                 <tbody>
                 @foreach (var m in Model.RecentMovements)
                 {
                     <tr>
-                        <td>@m.When.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@m.When.ToLocalTime().ToString("MMM d, HH:mm")</td>
                         <td>
                             @if (m.Type == WarehouseApp.Core.Entities.MovementType.Receive)
                             {
-                                <span class="badge bg-success">IN</span>
+                                <span class="badge bg-success"><i class="bi bi-arrow-down me-1"></i>IN</span>
                             }
                             else if (m.Type == WarehouseApp.Core.Entities.MovementType.Ship)
                             {
-                                <span class="badge bg-warning text-dark">OUT</span>
+                                <span class="badge bg-warning text-dark"><i class="bi bi-arrow-up me-1"></i>OUT</span>
                             }
                             else
                             {
@@ -110,20 +124,24 @@
                             }
                         </td>
                         <td>@m.ProductName</td>
-                        <td>@m.LocationCode</td>
-                        <td class="text-end">@m.Quantity</td>
+                        <td><code class="text-info">@m.LocationCode</code></td>
+                        <td class="text-end"><strong>@m.Quantity.ToString("N0")</strong></td>
                     </tr>
                 }
                 </tbody>
             </table>
-        }
-    </div>
+        </div>
+    }
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
-        const labels   = @Html.Raw(Json.Serialize(Model.Last7Days.Select(d => d.Date.ToString("MM-dd"))));
+        // Make Chart.js play nicely with dark mode
+        Chart.defaults.color = '#9ca3af';
+        Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+
+        const labels   = @Html.Raw(Json.Serialize(Model.Last7Days.Select(d => d.Date.ToString("MMM d"))));
         const received = @Html.Raw(Json.Serialize(Model.Last7Days.Select(d => d.Received)));
         const shipped  = @Html.Raw(Json.Serialize(Model.Last7Days.Select(d => d.Shipped)));
 
@@ -132,13 +150,17 @@
             data: {
                 labels,
                 datasets: [
-                    { label: 'Received', data: received, backgroundColor: '#198754' },
-                    { label: 'Shipped',  data: shipped,  backgroundColor: '#ffc107' }
+                    { label: 'Received', data: received, backgroundColor: 'rgba(16,185,129,0.85)', borderRadius: 6 },
+                    { label: 'Shipped',  data: shipped,  backgroundColor: 'rgba(245,158,11,0.85)', borderRadius: 6 }
                 ]
             },
             options: {
                 responsive: true,
-                scales: { y: { beginAtZero: true } }
+                plugins: { legend: { labels: { color: '#d1d5db' } } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: '#9ca3af' } },
+                    x: { grid: { display: false }, ticks: { color: '#9ca3af' } }
+                }
             }
         });
     </script>

@@ -7,8 +7,12 @@
 <h1>Stock Movement History</h1>
 
 <p>
-    <a class="btn btn-success" asp-action="Receive">Receive Shipment</a>
-    <a class="btn btn-warning" asp-action="Ship">Ship Out</a>
+    <a class="btn btn-success" asp-action="Receive">
+        <i class="bi bi-box-arrow-in-down me-1"></i> Receive Shipment
+    </a>
+    <a class="btn btn-warning" asp-action="Ship">
+        <i class="bi bi-box-arrow-up me-1"></i> Ship Out
+    </a>
 </p>
 
 @if (TempData["SuccessMessage"] != null)
