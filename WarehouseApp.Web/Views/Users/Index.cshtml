@@ -1,0 +1,42 @@
+@model IEnumerable<WarehouseApp.Web.Controllers.UserRoleViewModel>
+
+@{
+    ViewData["Title"] = "Users & Roles";
+    var roles = ViewBag.AvailableRoles as string[] ?? new string[0];
+}
+
+<h1>Users & Roles</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr><th>Email</th><th>Current Role</th><th>Change Role</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Email</td>
+                <td>@u.CurrentRole</td>
+                <td>
+                    <form asp-action="SetRole" method="post" class="d-flex gap-2">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="userId" value="@u.UserId" />
+                        <select name="role" class="form-select form-select-sm" style="width:auto">
+                            <option value="">(no role)</option>
+                            @foreach (var r in roles)
+                            {
+                                <option value="@r" selected="@(u.CurrentRole == r)">@r</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

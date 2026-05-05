@@ -36,6 +36,7 @@ public class StockMovementsController : Controller
         return View(movements);
     }
 
+    [Authorize(Roles = "Admin,WarehouseStaff")]
     public async Task<IActionResult> Receive()
     {
         await PopulateDropdownsAsync();
@@ -43,6 +44,7 @@ public class StockMovementsController : Controller
     }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,WarehouseStaff")]
     public async Task<IActionResult> Receive(StockMovementRequest request)
     {
         if (!ModelState.IsValid)
@@ -65,6 +67,7 @@ public class StockMovementsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin,WarehouseStaff")]
     public async Task<IActionResult> Ship()
     {
         await PopulateDropdownsAsync();
@@ -72,6 +75,7 @@ public class StockMovementsController : Controller
     }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,WarehouseStaff")]
     public async Task<IActionResult> Ship(StockMovementRequest request)
     {
         if (!ModelState.IsValid)

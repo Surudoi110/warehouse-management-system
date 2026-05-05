@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WarehouseApp.Core.Entities;
 using WarehouseApp.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WarehouseApp.Web.Controllers
 {
+    
+    [Authorize]
     public class ProductsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -44,16 +47,19 @@ namespace WarehouseApp.Web.Controllers
         }
 
         // GET: Products/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
+        
 
         // POST: Products/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,Sku,Name,Description,UnitPrice,ReorderLevel,CreatedAt")] Product product)
         {
             if (ModelState.IsValid)
@@ -66,6 +72,7 @@ namespace WarehouseApp.Web.Controllers
         }
 
         // GET: Products/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -117,6 +124,7 @@ namespace WarehouseApp.Web.Controllers
         }
 
         // GET: Products/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -137,6 +145,7 @@ namespace WarehouseApp.Web.Controllers
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var product = await _context.Products.FindAsync(id);

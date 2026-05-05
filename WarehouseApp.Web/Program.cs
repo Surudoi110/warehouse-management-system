@@ -5,6 +5,7 @@ using WarehouseApp.Infrastructure.Services;
 // using WarehouseApp.Web.Data;
 using WarehouseApp.Infrastructure.Data;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -18,11 +19,18 @@ builder.Services.AddScoped<IStockMovementService, StockMovementService>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+    
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    await SeedData.InitializeAsync(scope.ServiceProvider);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
